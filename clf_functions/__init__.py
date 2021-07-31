@@ -2,4 +2,4 @@
 - Ben McCarty
 - bmccarty505@gmail.com"""
 
-from hotel_data_functions import functions 
+from clf_functions import functions 
