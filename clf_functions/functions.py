@@ -8,11 +8,12 @@ By Ben McCarty (bmccarty505@gmail.com)'''
 
 import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
 from scipy import stats
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import seaborn as sns
+import seaborn as sns   
 
 import statsmodels.formula.api as smf
 import statsmodels.api as sms
@@ -25,6 +26,25 @@ from sklearn import metrics
 ##### -------------------- Functions: Unused -------------------- #####
 
 ## ID functions not used in project and move to this point
+
+## 
+def sort_report(Source, Sort_by, Ascending = False, Color='#d65f5f'):
+    """Generates an interactive report on a dataframe that allows the user to sort columns by values 
+    and creates background bars to visualize the percentage of the values (for numeric columns only).
+
+    Args:
+        dataframe (pd.DataFrame): Dataframe providing data to review and visualize
+        columns (str): Allows user to specify which columns have the background bars. **Currently unused in favor of interactive widget**
+        ascending (bool, optional): kwarg for .sort_values(). Defaults to False.
+        color (str, optional): Specifying the color for the background bars. Defaults to '#d65f5f' (red).
+    """
+
+    df = pd.read_csv(Source)
+
+    columns = list(report_df(df).select_dtypes(exclude=object).columns)
+
+    display(report_df(df).sort_values(by=[Sort_by], ascending=Ascending).style.bar(subset=columns, color=Color))
+    
 
 def find_outliers_z(data):
     """Detects outliers using the Z-score>3 cutoff.
@@ -361,7 +381,7 @@ def report_df(dataframe):
 
     report_df = pd.concat([report_df, dataframe.describe().T], axis=1)
 
-    print(dataframe.shape)
+    # print(dataframe.shape)
 
     return report_df
 
