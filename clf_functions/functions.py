@@ -28,7 +28,7 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ## 
-def sort_report(Source, Sort_by, Ascending = False, Color='#d65f5f'):
+def sort_report(Source, Sort_by, Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
     """Generates an interactive report on a dataframe that allows the user to sort columns by values 
     and creates background bars to visualize the percentage of the values (for numeric columns only).
 
@@ -41,9 +41,12 @@ def sort_report(Source, Sort_by, Ascending = False, Color='#d65f5f'):
 
     df = pd.read_csv(Source)
 
-    columns = list(report_df(df).select_dtypes(exclude=object).columns)
+    if Highlight_All == False:
+        columns = ['null_sum', 'null_pct']
+    else:
+        columns = list(report_df(df).select_dtypes(exclude=object).columns)
 
-    display(report_df(df).sort_values(by=[Sort_by], ascending=Ascending).style.bar(subset=columns, color=Color))
+    display(report_df(df).sort_values(by=Sort_by, ascending=Ascending_Values).style.bar(subset=columns, color=Color))
     
 
 def find_outliers_z(data):
