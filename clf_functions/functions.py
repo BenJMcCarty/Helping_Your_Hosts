@@ -28,22 +28,24 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ## 
-def sort_report(Source, Sort_by, Drop_Cols = False, Cols = ['Keep all columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
-    """Generates an interactive report on a dataframe that allows the user to sort columns by values 
-    and creates background bars to visualize the percentage of the values (for numeric columns only).
+def sort_report(Source, Sort_by, Show_Only_Missing = False, Drop_Cols = False, Cols = ['Keep all columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
+    """[summary]
 
     Args:
-        dataframe (pd.DataFrame): Dataframe providing data to review and visualize
-        columns (str): Allows user to specify which columns have the background bars. **Currently unused in favor of interactive widget**
-        ascending (bool, optional): kwarg for .sort_values(). Defaults to False.
-        color (str, optional): Specifying the color for the background bars. Defaults to '#d65f5f' (red).
+        Source (string): Link to dataset - either local or remote
+        Sort_by (list): List of values to use for sorting the resulting dataframe values.
+        Show_Only_Missing (bool, optional): Show only features with missing values. Defaults to False.
+        Drop_Cols (bool, optional): Drop specific columns. Defaults to False.
+        Cols (list, optional): List of columns to drop; only works when Drop_Cols is True. Defaults to ['Keep all columns'].
+        Highlight_All (bool, optional): Apply cell highlighting based on values. Defaults to False.
+        Ascending_Values (bool, optional): Sorting results displayed in ascending order. Defaults to False.
+        Color (str, optional): Color used for bars in cells. Defaults to '#d65f5f'.
     """
 
     df = pd.read_csv(Source)
 
     if Drop_Cols is True:
         df = df.drop(columns = Cols).copy()
-
     else:
         df = df
 
@@ -52,7 +54,12 @@ def sort_report(Source, Sort_by, Drop_Cols = False, Cols = ['Keep all columns'],
     else:
         columns = list(report_df(df).select_dtypes(exclude=object).columns)
 
-    display(report_df(df).sort_values(by=Sort_by, ascending=Ascending_Values).style.bar(subset=columns, color=Color))
+
+    if Show_Only_Missing == True:
+        results = report_df(df)
+        display(results[results['null_sum'] > 0].sort_values(by=Sort_by, ascending=Ascending_Values).style.bar(subset=columns, color=Color))
+    else:
+        display(report_df(df).sort_values(by=Sort_by, ascending=Ascending_Values).style.bar(subset=columns, color=Color))
     
 
 def find_outliers_z(data):
