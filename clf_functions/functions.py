@@ -28,7 +28,7 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ## 
-def sort_report(Source, Sort_by, Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
+def sort_report(Source, Sort_by, Drop_Cols = False, Cols = ['Keep all columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
     """Generates an interactive report on a dataframe that allows the user to sort columns by values 
     and creates background bars to visualize the percentage of the values (for numeric columns only).
 
@@ -40,6 +40,12 @@ def sort_report(Source, Sort_by, Highlight_All=False, Ascending_Values = False, 
     """
 
     df = pd.read_csv(Source)
+
+    if Drop_Cols is True:
+        df = df.drop(columns = Cols).copy()
+
+    else:
+        df = df
 
     if Highlight_All == False:
         columns = ['null_sum', 'null_pct']
