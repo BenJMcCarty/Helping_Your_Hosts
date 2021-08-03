@@ -398,7 +398,10 @@ def report_df(dataframe):
         pd.DataFrame: DataFrame containing results of summary
     """
 
-    report_df = pd.DataFrame({'datatypes':dataframe.dtypes,'num_unique':dataframe.nunique(),'null_sum':dataframe.isna().sum(),'null_pct':dataframe.isna().sum()/len(dataframe)})
+    report_df = pd.DataFrame({'null_sum':dataframe.isna().sum(),
+                            'null_pct':dataframe.isna().sum()/len(dataframe), 
+                            'datatypes':dataframe.dtypes,
+                            'num_unique':dataframe.nunique()})
 
     report_df = pd.concat([report_df, dataframe.describe().T], axis=1)
 
