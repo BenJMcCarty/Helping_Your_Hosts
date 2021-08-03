@@ -28,7 +28,7 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ## 
-def sort_report(Source, Sort_by, Show_Only_Missing = False, Drop_Cols = False, Cols = ['Keep all columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
+def sort_report(Source, Sort_by, Show_Only_Missing = False, Drop_Cols = False, Cols = ['N/A - Specify Columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
     """[summary]
 
     Args:
@@ -44,10 +44,15 @@ def sort_report(Source, Sort_by, Show_Only_Missing = False, Drop_Cols = False, C
 
     df = pd.read_csv(Source)
 
-    if Drop_Cols is True:
-        df = df.drop(columns = Cols).copy()
-    else:
-        df = df
+
+    try:
+        if Drop_Cols is True:
+            df = df.drop(columns = Cols).copy()
+        else:
+            df = df
+    except Exception:
+        e = Exception
+        print('**No columns were dropped.** Please make sure you specify the correct column names in the "Cols" keyword argument.')
 
     if Highlight_All == False:
         columns = ['null_sum', 'null_pct']
