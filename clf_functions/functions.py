@@ -28,7 +28,7 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ##
-def evaluate_classification(model, X_test, y_test, model_scoring_metric, X_train=None, y_train=None,
+def evaluate_classification(model,X_train, y_train, X_test, y_test, model_scoring_metric,
                     labels=None, cmap='Blues',normalize='true',
                     figsize=(10,4)):
 
@@ -38,42 +38,42 @@ def evaluate_classification(model, X_test, y_test, model_scoring_metric, X_train
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    print('\n|' + '----'*4 + ' Classification Results ' + '---'*5 + '|'+ '\n')
+    print('\n|' + '----'*4 + ' Classification Results ' + '---'*16 + '-|'+ '\n')
     
     ### --- Scores --- ###
 
+
+
+    train_score = model.score(X_train, y_train).round(2)
+    print(f'Training {model_scoring_metric} score: {train_score}')
+
     test_score = model.score(X_test,y_test).round(2)
+    print(f'\nTesting {model_scoring_metric} score: {test_score}\n')
 
-    if (X_train is not None) & (y_train is not None):
+    difference = train_score - test_score
 
-        train_score = model.score(X_train, y_train).round(2)
-        print(f'Training {scoring_metric} score: {train_score}')
-
-        difference = train_score - test_score
-
-        if train_score > test_score:
-            print(f"The training score is larger by {difference:.2f} points.")
-        else:
-            print(f"The testing score is larger by {difference:.2f} points.")
+    if difference > 0:
+        print(f"\tThe training score is larger by {difference:.2f} points.")
+    elif difference < 0:
+        print(f"\tThe training score is smaller by {difference:.2f} points.")
+    else:
+        print(f"\tThe scores are the same size.")
 
 
-    print(f'\nTesting {scoring_metric} score: {test_score}\n')
 
     ### --- Log Loss --- ###
 
-    if (X_train is not None) & (y_train is not None):
+    y_hat_train = model.predict(X_train)
+    prob_train = model.predict_proba(X_train)
+    
+    print(f"\n\nTraining Data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}\n")
 
-        y_hat_train = model.predict(X_train)
-        prob_train = model.predict_proba(X_train)
-        
-        print(f"\nTraining Data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}\n")
-
-        if metrics.log_loss(y_train, prob_train) >= .66:
-            print('The log loss for the testing data is high, indicating a poorly-performing model.')
-        elif metrics.log_loss(y_train, prob_train) <= .33:
-            print('The log loss for the testing data is low, indicating a well-performing model.')
-        else:
-            print('The log loss for the testing data is moderate, indicating a weakly-performing model.')
+    if metrics.log_loss(y_train, prob_train) >= .66:
+        print('\tThe log loss for the training data is high, indicating a poorly-performing model.')
+    elif metrics.log_loss(y_train, prob_train) <= .33:
+        print('\tThe log loss for the training data is low, indicating a well-performing model.')
+    else:
+        print('\tThe log loss for the training data is moderate, indicating a weakly-performing model.')
 
     y_hat_test = model.predict(X_test)
     prob_test = model.predict_proba(X_test)
@@ -81,40 +81,39 @@ def evaluate_classification(model, X_test, y_test, model_scoring_metric, X_train
     print(f"\nTesting Data Log Loss: {metrics.log_loss(y_test, prob_test):.2f}\n")
     
     if metrics.log_loss(y_test, prob_test) >= .66:
-        print('The log loss for the testing data is high, indicating a poorly-performing model.')
+        print('\tThe log loss for the testing data is high, indicating a poorly-performing model.')
     elif metrics.log_loss(y_test, prob_test) <= .33:
-        print('The log loss for the testing data is low, indicating a well-performing model.')
+        print('\tThe log loss for the testing data is low, indicating a well-performing model.')
     else:
-        print('The log loss for the testing data is moderate, indicating a weakly-performing model.')
+        print('\tThe log loss for the testing data is moderate, indicating a weakly-performing model.')
 
     ### --- Clasification Reports --- ###
 
-    if (X_train is not None) & (y_train is not None):
-        print('\n\n|' + '----'*4 + ' Classification Report - Training Data ' + '---'*5 + '|'+ '\n')
-        print(metrics.classification_report(y_train, y_hat_train,
-                                    target_names=labels))
+    print('\n\n|' + '----'*4 + ' Classification Report - Training Data ' + '---'*11 + '-|'+ '\n')
+    print(metrics.classification_report(y_train, y_hat_train,
+                                target_names=labels))
 
-    print('\n\n|' + '----'*4 + ' Classification Report  - Testing Data ' + '---'*5 + '-|'+ '\n')
+    print('\n\n|' + '----'*4 + ' Classification Report  - Testing Data ' + '---'*11 + '-|'+ '\n')
     print(metrics.classification_report(y_test, y_hat_test,
                                     target_names=labels))
 
     ### --- Clasification Visualizations --- ###
 
-    if (X_train is not None) & (y_train is not None):
+    print('\n|' + '----'*4 + ' Classification Visualizations - Training Data ' + '---'*8 + '--|'+ '\n')
 
-        print('\n|' + '----'*4 + ' Classification Visualizations - Training Data ' + '---'*5 + '|'+ '\n')
+    fig, ax = plt.subplots(ncols=2, figsize = figsize)
+    metrics.plot_confusion_matrix(model, X_train,y_train,cmap=cmap,
+                            normalize=normalize, display_labels=labels,
+                            ax=ax[0])
 
-        fig, ax = plt.subplots(ncols=2, figsize = figsize)
-        metrics.plot_confusion_matrix(model, X_train,y_train,cmap=cmap,
-                              normalize=normalize, display_labels=labels,
-                             ax=ax[0])
+    curve = metrics.plot_roc_curve(model, X_train,y_train,ax=ax[1])
+    curve.ax_.grid()
+    curve.ax_.plot([0,1],[0,1], ls=':')
+    plt.tight_layout()
+    plt.show()
 
-        curve = metrics.plot_roc_curve(model, X_train,y_train,ax=ax[1])
-        curve.ax_.grid()
-        curve.ax_.plot([0,1],[0,1], ls=':')
-        plt.tight_layout()
 
-    print('\n|' + '----'*4 + ' Classification Visualizations - Testing Data ' + '---'*5 + '-|'+ '\n')
+    print('\n|' + '----'*4 + ' Classification Visualizations - Testing Data ' + '---'*8 + '---|'+ '\n')
 
     fig, ax = plt.subplots(ncols=2, figsize = figsize)
     metrics.plot_confusion_matrix(model, X_test,y_test,cmap=cmap,

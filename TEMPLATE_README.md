@@ -87,39 +87,41 @@ Questions to consider:
     * Being able to generate the data for the number of years of experience adds more insight to the model, increasing the model's performance.
 ***
 
-## Results
+# Results
 
 Present your key results.
 
-***
+
 Questions to consider:
 * How do you interpret the results?
+    * aaa
 * How confident are you that your results would generalize beyond the data you have?
+    * aaa
+
+
+
+## Visuals
+[graph1](./images/viz1.png)
+
 ***
-
-Here is an example of how to embed images from your sub-folder:
-
-### Visual 1
-![graph1](./images/viz1.png)
-
-## Conclusions
+# Conclusions
 
 Provide your conclusions about the work you've done, including any limitations or next steps.
 
-***
+
 Questions to consider:
 * What would you recommend the business do as a result of this work?
 * What are some reasons why your analysis might not fully solve the business problem?
 * What else could you do in the future to improve this project?
 ***
 
-## For More Information
+# For More Information
 
 Please review our full analysis in [our Jupyter Notebook](./dsc-phase1-project-template.ipynb) or our [presentation](./DS_Project_Presentation.pdf).
 
 For any additional questions, please contact **name & email, name & email**
 
-## Repository Structure
+# Repository Structure
 
 Describe the structure of your repository and its contents, for example:
 
