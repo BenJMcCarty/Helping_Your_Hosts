@@ -27,6 +27,63 @@ from sklearn import metrics
 
 ## ID functions not used in project and move to this point
 
+##
+def evaluate_classification(model, X_test, y_test, X_train=None, y_train=None,
+                    labels=None, cmap='Blues',normalize='true',
+                    figsize=(10,4)):
+
+    '''Adapted from:
+    https://github.com/jirvingphd/Online-DS-FT-022221-Cohort-Notes/blob/master/Phase_3/topic_25_logistic_regression/topic_25_pt2_LogisticRegression_titanic-v2-SG.ipynb'''
+    
+    from sklearn import metrics
+    import matplotlib.pyplot as plt
+    
+    print('\n|' + '----'*4 + ' Classification Results ' + '---'*5 + '|'+ '\n')
+    
+    if (X_train is not None) & (y_train is not None):
+        train_score = model.score(X_train, y_train).round(2)
+        test_score = model.score(X_test,y_test).round(2)
+        difference = train_score - test_score
+
+        print(f'Training score: {train_score}')
+        print(f'Testing score: {test_score}\n')
+
+        if train_score > test_score:
+            print(f"The training score is larger by {difference:.2f} points.")
+
+        else:
+            print(f"The testing score is larger by {difference:.2f} points.")
+
+    y_hat_test = model.predict(X_test)
+    prob_test = model.predict_proba(X_test)
+
+    print(f"\nLog loss: {metrics.log_loss(y_test, prob_test):.2f}\n")
+    
+    if metrics.log_loss(y_test, prob_test) >= .66:
+        print('The log loss is high, indicating a poorly-performing model.')
+    elif metrics.log_loss(y_test, prob_test) <= .33:
+        print('The log loss is low, indicating a well-performing model.')
+    else:
+        print('The log loss is moderate, indicating weak model performance.')
+
+    print('\n\n|' + '----'*4 + ' Classification Report ' + '---'*5 + '-|'+ '\n')
+    print(metrics.classification_report(y_test, y_hat_test,
+                                    target_names=labels))
+    print('\n|' + '----'*4 + ' Classification Models ' + '---'*5 + '-|'+ '\n')
+
+    fig, ax = plt.subplots(ncols=2, figsize = figsize)
+    metrics.plot_confusion_matrix(model, X_test,y_test,cmap=cmap,
+                              normalize=normalize, display_labels=labels,
+                             ax=ax[0])
+
+    curve = metrics.plot_roc_curve(model, X_test,y_test,ax=ax[1])
+    curve.ax_.grid()
+    curve.ax_.plot([0,1],[0,1], ls=':')
+    plt.tight_layout()
+
+    return None
+
+
 ## 
 def sort_report(Source, Sort_by, Show_Only_Missing = False, Drop_Cols = False, Cols = ['N/A - Specify Columns'], Highlight_All=False, Ascending_Values = False, Color='#d65f5f'):
     """[summary]
