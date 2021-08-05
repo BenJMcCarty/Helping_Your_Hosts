@@ -28,17 +28,62 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ##
+def plot_importances(model, X_train_df, count = 10, return_importances = False):
+    """Given a fitted classification model with feature importances, creates a 
+    horizontal barplot of the top 10 most important features.
+
+    Args:
+        model (SKlearn model): pre-fit classification model
+        X_train_df (pd.DataFrame: DF used for modeling - provides index to pair with values
+        count (int, optional): Top # importances. Defaults to 10.
+        return_importances (bool, optional): If True, returns the feature importances as a Series. Defaults to False.
+
+    Returns:
+        - Prints bar chart always
+        If return_importances = True:
+            pd.Series: feature importances as a Pandas 
+    """    
+
+    importances = pd.Series(model.feature_importances_, index= X_train_df.columns)
+    
+    top_imp = importances.sort_values()[-count:].plot(kind='barh')
+    
+    top_imp.set(title=f'Top {count} Most Important Features', xlabel='Importance',
+                ylabel='Features')
+    
+    if return_importances == True:
+        return importances
+
+##
 def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
                     verbose = True, labels=None, cmap='Blues',normalize='true',
-                    figsize=(10,4)):
+                    figsize=(10,4)):                    
+    """[summary]
+    
+    Adapted from:
+    https://github.com/jirvingphd/Online-DS-FT-022221-Cohort-Notes/blob/master/Phase_3/topic_25_logistic_regression/topic_25_pt2_LogisticRegression_titanic-v2-SG.ipynb
+    
+    Args:
+        model ([type]): [description]
+        X_train ([type]): [description]
+        y_train ([type]): [description]
+        X_test ([type]): [description]
+        y_test ([type]): [description]
+        metric ([type]): [description]
+        verbose (bool, optional): 0, 1, 2. Defaults to True.
+        labels ([type], optional): [description]. Defaults to None.
+        cmap (str, optional): [description]. Defaults to 'Blues'.
+        normalize (str, optional): [description]. Defaults to 'true'.
+        figsize (tuple, optional): [description]. Defaults to (10,4).
 
-    '''Adapted from:
-    https://github.com/jirvingphd/Online-DS-FT-022221-Cohort-Notes/blob/master/Phase_3/topic_25_logistic_regression/topic_25_pt2_LogisticRegression_titanic-v2-SG.ipynb'''
+    Returns:
+        [type]: [description]
+    """                    
     
     from sklearn import metrics
     import matplotlib.pyplot as plt
 
-    print('\n|' + '----'*8 + ' Classification Metrics ' + '---'*11 + '---|\n')
+    print('\n|' + '----'*8 + ' Classification Metrics ' + '---'*11 + '--|\n')
     
     ### --- Scores --- ###
 
@@ -46,17 +91,17 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
     print(f'Training {metric} score: {train_score}')
 
     test_score = model.score(X_test,y_test).round(2)
-    print(f'\nTesting {metric} score: {test_score}\n')
+    print(f'Testing {metric} score: {test_score}')
 
     difference = train_score - test_score
 
     if verbose == True:
         if difference > 0:
-            print(f"\tThe training score is larger by {difference:.2f} points.")
+            print(f"\t- The training score is larger by {difference:.2f} points.")
         elif difference < 0:
-            print(f"\tThe training score is smaller by {difference:.2f} points.")
+            print(f"\t- The training score is smaller by {difference:.2f} points.")
         else:
-            print(f"\tThe scores are the same size.")
+            print(f"\t- The scores are the same size.")
 
 
     ### --- Log Loss --- ###
@@ -64,21 +109,14 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
     y_hat_train = model.predict(X_train)
     prob_train = model.predict_proba(X_train)
     
-    print(f"\n\nTraining Data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}\n")
-
-    if verbose == True:
-        if metrics.log_loss(y_train, prob_train) >= .66:
-            print('\tThe log loss for the training data is high, indicating a poorly-performing model.')
-        elif metrics.log_loss(y_train, prob_train) <= .33:
-            print('\tThe log loss for the training data is low, indicating a well-performing model.')
-        else:
-            print('\tThe log loss for the training data is moderate, indicating a weakly-performing model.')
+    print(f"\n\nTraining data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}")
 
     y_hat_test = model.predict(X_test)
     prob_test = model.predict_proba(X_test)
 
-    print(f"\nTesting data log loss: {metrics.log_loss(y_test, prob_test):.2f}\n")
-    if verbose == True:
+    print(f"Testing data log loss: {metrics.log_loss(y_test, prob_test):.2f}\n")
+
+    if verbose == 2:
         if metrics.log_loss(y_test, prob_test) >= .66:
             print('\tThe log loss for the testing data is high, indicating a poorly-performing model.')
         elif metrics.log_loss(y_test, prob_test) <= .33:
@@ -88,11 +126,11 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
 
     ### --- Clasification Reports --- ###
 
-    print('\n\n\n|' + '----'*7 + ' Classification Report - Training Data ' + '---'*8 + '|\n')
+    print('\n|' + '----'*7 + ' Classification Report - Training Data ' + '---'*8 + '|\n')
     print(metrics.classification_report(y_train, y_hat_train,
                                 target_names=labels))
 
-    print('\n\n|' + '----'*6 + ' Classification Visualizations - Training Data ' + '---'*6 + '--|\n')
+    # print('\n\n|' + '----'*6 + ' Classification Visualizations - Training Data ' + '---'*6 + '--|\n')
 
     fig, ax = plt.subplots(ncols=2, figsize = figsize)
     metrics.plot_confusion_matrix(model, X_train,y_train,cmap=cmap,
@@ -109,12 +147,7 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
     print(metrics.classification_report(y_test, y_hat_test,
                                     target_names=labels))
 
-    ### --- Clasification Visualizations --- ###
-
-
-
-
-    print('\n\n|' + '----'*6 + ' Classification Visualizations - Testing Data ' + '---'*6 + '---|'+ '\n')
+    # print('\n\n|' + '----'*6 + ' Classification Visualizations - Testing Data ' + '---'*6 + '---|'+ '\n')
 
     fig, ax = plt.subplots(ncols=2, figsize = figsize)
     metrics.plot_confusion_matrix(model, X_test,y_test,cmap=cmap,
