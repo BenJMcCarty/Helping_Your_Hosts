@@ -1,6 +1,6 @@
 '''Name: Functions
 
-Description: functions created for purposes of Phase 2 Project (revisited)
+Description: functions created for purposes of Phase 3 Project
 
 By Ben McCarty (bmccarty505@gmail.com)'''
 
