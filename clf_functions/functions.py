@@ -28,7 +28,127 @@ from sklearn import metrics
 ## ID functions not used in project and move to this point
 
 ##
-def plot_importances(model, X_train_df, count = 10, return_importances = False):
+## Generating scores for later comparisons
+
+def model_scores(model, X_train, y_train, X_test, y_test):
+
+    y_hat_train = model.predict(X_train)
+    prob_train = model.predict_proba(X_train)
+
+    y_hat_test = model.predict(X_test)
+    prob_test = model.predict_proba(X_test)
+
+    base_train_ll = metrics.log_loss(y_train, prob_train).round(2)
+    base_test_ll = metrics.log_loss(y_test, prob_test).round(2)
+
+    base_train_score = model.score(X_train, y_train).round(2)
+    base_test_score = model.score(X_test,y_test).round(2)
+
+
+    return base_train_score, base_test_score, base_train_ll, base_test_ll
+
+##
+def plot_comparison_hist(feature, dataframe, bins = 'auto', target = None, save_fig=False):
+
+    feature_name = feature.replace("_", " ").replace("'", "").title()
+    
+    if len(list(dataframe[feature].unique())) > 10:
+        ax = sns.histplot(data=dataframe, x= dataframe[feature] \
+                           .value_counts(ascending=False).iloc[:30],
+                          hue = target)
+    else:
+        ax = sns.histplot(data=dataframe, x= feature, hue = target, bins = bins)
+    
+    if list((dataframe[feature].unique())) == [0,1]:
+        plt.xticks([0, 1], ['No', 'Yes'])
+
+    ax.set(title = f'Total Counts of Reviews for {feature_name}',
+           xlabel = feature_name)
+        
+    ax.legend(('Less than 4', '4 or Greater'),fontsize= 'medium', 
+              title = 'Rating', title_fontsize = 'large', loc = 0);
+
+    if save_fig == True:
+        plt.savefig(f'{feature}_importance.png');
+
+##
+def plot_comparison_count(feature, dataframe, target = 'review_scores_rating',
+                    save_fig=False, print_target = None):
+
+    feature_name = feature.replace("_", " ").title()
+    
+    
+    if len(list(dataframe[feature].unique())) > 10:
+        ax = sns.countplot(data=dataframe, x= feature,
+                          hue = target)
+    else:
+        ax = sns.countplot(data=dataframe, x= feature, hue = target)
+    
+    if list((dataframe[feature].unique())) == [0,1]:
+        plt.xticks([0, 1], ['No', 'Yes'])
+
+    if print_target != None:
+        target_name = target.replace("_", " ").title()
+        ax.set(title = f'Comparing {feature_name} by {target_name}',
+            xlabel = feature_name,ylabel = f'Count of {target_name}')
+    else:
+        ax.set(title = f'Comparing {feature_name} by Number of Reviews ',
+            xlabel = feature_name,ylabel = f'Number of Reviews')
+
+
+    ax.legend(('Less than 4', '4 or Greater'),fontsize= 'medium', 
+              title = 'Rating', title_fontsize = 'large', loc = 0);
+
+    if save_fig == True:
+        plt.savefig(f'{feature}_importance.png');
+
+##
+def plot_depths(fitted_model, verbose = False):
+    depths = []
+
+    for i in fitted_model.estimators_:
+        depths.append(i.get_depth())
+
+    print(f'\nThe maximum depth is: {np.max(depths)}\n')
+
+    ax = sns.histplot(depths)
+
+    ax.set(title = 'Tree Depths Used in RandomForestClassifier',
+           xlabel = 'Depths', ylabel = 'Number of Trees')
+    ax.axvline(np.mean(depths), label = f'Mean: {np.mean(depths):.0f}',
+               color='k')
+
+    plt.legend(loc=0);
+    plt.show
+    
+    if verbose == True:
+        return depths
+
+
+##
+def plot_depths(fitted_model, verbose = False):
+    depths = []
+
+    for i in fitted_model.estimators_:
+        depths.append(i.get_depth())
+
+    print(f'\nThe maximum depth is: {np.max(depths)}\n')
+
+    ax = sns.histplot(depths)
+
+    ax.set(title = 'Tree Depths Used in RandomForestClassifier',
+           xlabel = 'Depths', ylabel = 'Number of Trees')
+    ax.axvline(np.mean(depths), label = f'Mean: {np.mean(depths):.0f}',
+               color='k')
+
+    plt.legend(loc=0);
+    plt.show
+    
+    if verbose == True:
+        return depths
+
+##
+def plot_importances(model, X_train_df, count = 10, return_importances = False, model_name = None, save_fig = False):
     """Given a fitted classification model with feature importances, creates a 
     horizontal barplot of the top 10 most important features.
 
@@ -46,18 +166,42 @@ def plot_importances(model, X_train_df, count = 10, return_importances = False):
 
     importances = pd.Series(model.feature_importances_, index= X_train_df.columns)
     
-    top_imp = importances.sort_values()[-count:].plot(kind='barh')
+    importances = importances.sort_values(ascending = False)
+
+    top_imp = list(importances.sort_values(ascending = False).index[:count])
+   
+    for i in range(len(top_imp)):
     
-    top_imp.set(title=f'Top {count} Most Important Features', xlabel='Importance',
-                ylabel='Features')
+        if top_imp[i] == 'minimum_nights_avg_ntm':
+            top_imp[i] = 'minimum_avg_nights.'
+        if top_imp[i] == 'maximum_nights_avg_ntm':
+            top_imp[i] = 'maximum_avg_nights.'
+        if top_imp[i] == 'host_listings_count':
+            top_imp[i] = 'number_of_host_regional_listings'
+        if top_imp[i] == 'host_total_listings_count':
+            top_imp[i] = 'number_of_host_overall_listings'
+        if top_imp[i] == 'num_bathrooms':
+            top_imp[i] = 'number_of_bathrooms'
+        if top_imp[i] == 'host_is_superhost':
+            top_imp[i] = 'is_superhost'
+        
+            
+        top_imp[i] = top_imp[i].replace("_", " ").title()
+
+    ax = importances[:count].plot(kind= 'barh')
+    ax.set(title='Top 10 Strongest Predictors', xlabel='Importance',
+                yticklabels=top_imp)
     
+    if save_fig == True:
+        plt.savefig(f'{model_name}_feat_imp.png')
+
     if return_importances == True:
         return importances
 
 ##
 def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
                     verbose = True, labels=None, cmap='Blues',normalize='true',
-                    figsize=(10,4)):                    
+                    figsize=(10,4)):                 
     """[summary]
     
     Adapted from:
@@ -95,25 +239,23 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
 
     difference = train_score - test_score
 
-    if verbose == True:
+    if verbose == 1:
         if difference > 0:
-            print(f"\t- The training score is larger by {difference:.2f} points.")
+            print(f"\t- The training score is larger by {np.abs(difference):.2f} points.")
         elif difference < 0:
-            print(f"\t- The training score is smaller by {difference:.2f} points.")
+            print(f"\t- The training score is smaller by {np.abs(difference):.2f} points.")
         else:
             print(f"\t- The scores are the same size.")
-
 
     ### --- Log Loss --- ###
 
     y_hat_train = model.predict(X_train)
     prob_train = model.predict_proba(X_train)
-    
-    print(f"\n\nTraining data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}")
 
     y_hat_test = model.predict(X_test)
     prob_test = model.predict_proba(X_test)
 
+    print(f"\n\nTraining data Log Loss: {metrics.log_loss(y_train, prob_train):.2f}")
     print(f"Testing data log loss: {metrics.log_loss(y_test, prob_test):.2f}\n")
 
     if verbose == 2:
