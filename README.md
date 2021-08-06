@@ -26,10 +26,17 @@ With the question of how to predict high satisfaction scores in mind, I obtained
 
 I started my analysis with basic statistical overviews, highlighting the large percentages of property entries that lacked 25% or more entries for each feature of the listing. Additionally, I found several features that were missing 25%+ entries as well as several columns of irrelevant data (URLs; details about how/when the data was collected; etc.) which I removed from the data. Due to the substantial amount of missing data, I chose to drop those rows and columns missing 25%+ entries as well.
 
-As part of the cleaning and preparation process, I converted 
+*Additional steps in the cleaning and preparation process included:*
 
+* Converting "t"/"f" letters into 1/0 values to represent True/False
 
-**After preparing the data, I use machine learning modeling techniques to determine my most important features for the region.**
+* Converting "price" from text into a number.
+
+* Created a new feature, "Years Hosting," to indicate for how many years of hosting experience for each listing.
+
+* Splitting the long text strings of host verification methods, neighborhoods, and amenities into separate features for each method, neighborhood, and amenity, respectively.
+
+**After preparing the data, I used machine learning modeling techniques to determine my most important features for the region.**
 
 ---
 
