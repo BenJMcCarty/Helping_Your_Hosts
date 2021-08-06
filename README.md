@@ -8,9 +8,9 @@
 
 **In a post-COVID world, hospitality faces challenges as travel restrictions are imposed and lifted (and then re-imposed).** Travel and tourism came to a crashing halt in 2020 and still face challenges in returning to pre-2020 business levels.
 
-As restless travelers look to escape the confines of their homes, they expect the same high-quality services and experiences as pre-COVID. Competition within the hospitality industry is stronger than ever, putting more pressure on businesses to keep and grow their customer base.
+As restless travelers look to escape the confines of their homes, they expect the same high-quality services and experiences as pre-COVID. Competition within the hospitality industry is stronger than ever, putting more pressure on businesses to regain, retain, and expand their guest ledgers.
 
-***The main performance metric for every company involved in hospitality is guest satisfaction.*** If a guest isn't satisfied, they are not likely to return for another visit and may share their experience with others, pushing away potential business.
+***The main performance metric for every company involved in hospitality is guest satisfaction.*** If a guest isn't satisfied, they are less likely to return for another visit and may share their experience with others, pushing away potential business.
 
 Airbnb hosts face the same challenges as traditional hotels in these aggressive and challenging market conditions. In order to maximize their profitability and to distinguish themselves from traditional hotels, **Airbnb needs to know which aspects of a host property are the strongest predictors of whether a guest will give a satisfaction score of 4.8 or higher (out of 5).**
 
@@ -18,7 +18,12 @@ Airbnb hosts face the same challenges as traditional hotels in these aggressive 
 
 # **Data:**
 
-With the question of how to predict high satisfaction scores in mind, I obtained data about Airbnb host properties from the [Inside Airbnb project](http://insideairbnb.com/get-the-data.html#:~:text=Washington%2C%20D.C.%2C%20District%20of%20Columbia%2C%20United%20States) for the Washington, D.C. area. The dataset includes details about the hosts themselves; property details (bedrooms, bathrooms, property types); and reservation availability.
+With the question of how to predict high satisfaction scores in mind, I obtained data about Airbnb host properties from the [Inside Airbnb project](http://insideairbnb.com/get-the-data.html#:~:text=Washington%2C%20D.C.%2C%20District%20of%20Columbia%2C%20United%20States) for the Washington, D.C. area.
+
+The dataset includes:
+* Details about the hosts (when they started hosting and host-provided bios)
+* Property details (bedrooms, bathrooms, and room/property types)
+* Booking details (price, availability, and min/max number of nights)
 
 ---
 
@@ -28,11 +33,11 @@ I started my analysis with basic statistical overviews, identifying several colu
 
 *Additional steps in the cleaning and preparation process included:*
 
-* Converting "t"/"f" letters into 1/0 values to represent True/False
+* Converting "t"/"f" letters into 1/0 values to represent True/False values.
 
 * Converting "price" from text into a number.
 
-* Created a new feature, "Years Hosting," to indicate for how many years of hosting experience for each listing.
+* Creating a new feature, "Years Hosting," to indicate number of years of hosting experience for each listing.
 
 * Splitting the long text strings of host verification methods, neighborhoods, and amenities into separate features for each method, neighborhood, and amenity, respectively.
 
@@ -42,7 +47,7 @@ I started my analysis with basic statistical overviews, identifying several colu
 
 # **Results:**
 
-The "Random Forest" classification model showed the strongest performance in terms of properly identifying whether a property would meet the threshold of 4.8 or higher. The model is correct 67% of the time, which is better than my baseline model of 50%.
+The "Random Forest"-style classification model showed the strongest performance in terms of properly identifying whether a property would meet the threshold of 4.8 or higher. The model is correct 67% of the time, which is better than my baseline model of 50%.
 
 > Potential factors for the inaccuracy may include:
 >* Extreme values in the data
