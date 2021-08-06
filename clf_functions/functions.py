@@ -48,22 +48,26 @@ def model_scores(model, X_train, y_train, X_test, y_test):
     return base_train_score, base_test_score, base_train_ll, base_test_ll
 
 ##
-def plot_comparison_hist(feature, dataframe, bins = 'auto', target = None, save_fig=False):
+def plot_comparison_hist(data, feature, target = None, bins = 'auto', alt_name = None, save_fig=False):
 
     feature_name = feature.replace("_", " ").replace("'", "").title()
     
-    if len(list(dataframe[feature].unique())) > 10:
-        ax = sns.histplot(data=dataframe, x= dataframe[feature] \
-                           .value_counts(ascending=False).iloc[:30],
-                          hue = target)
+    if len(list(data[feature].unique())) > 10:
+        ax = sns.histplot(data=data, x= data[feature] \
+                           .value_counts(ascending=False),
+                          hue = target, bins=bins)
     else:
-        ax = sns.histplot(data=dataframe, x= feature, hue = target, bins = bins)
+        ax = sns.histplot(data=data, x= feature, hue = target, bins = bins)
     
-    if list((dataframe[feature].unique())) == [0,1]:
+    if list((data[feature].unique())) == [0,1]:
         plt.xticks([0, 1], ['No', 'Yes'])
 
-    ax.set(title = f'Total Counts of Reviews for {feature_name}',
-           xlabel = feature_name)
+    if alt_name == None:
+        ax.set(title = f'Total Counts of Reviews for {feature_name}',
+            xlabel = feature_name)
+    else:
+        ax.set(title = f'Total Counts of Reviews for {alt_name}',
+            xlabel = alt_name)
         
     ax.legend(('Less than 4', '4 or Greater'),fontsize= 'medium', 
               title = 'Rating', title_fontsize = 'large', loc = 0);
@@ -72,19 +76,19 @@ def plot_comparison_hist(feature, dataframe, bins = 'auto', target = None, save_
         plt.savefig(f'{feature}_importance.png');
 
 ##
-def plot_comparison_count(feature, dataframe, target = 'review_scores_rating',
+def plot_comparison_count(data,feature, target = 'review_scores_rating',
                     save_fig=False, print_target = None):
 
     feature_name = feature.replace("_", " ").title()
     
     
-    if len(list(dataframe[feature].unique())) > 10:
-        ax = sns.countplot(data=dataframe, x= feature,
+    if len(list(data[feature].unique())) > 10:
+        ax = sns.countplot(data=data, x= feature,
                           hue = target)
     else:
-        ax = sns.countplot(data=dataframe, x= feature, hue = target)
+        ax = sns.countplot(data=data, x= feature, hue = target)
     
-    if list((dataframe[feature].unique())) == [0,1]:
+    if list((data[feature].unique())) == [0,1]:
         plt.xticks([0, 1], ['No', 'Yes'])
 
     if print_target != None:
@@ -189,7 +193,7 @@ def plot_importances(model, X_train_df, count = 10, return_importances = False, 
         top_imp[i] = top_imp[i].replace("_", " ").title()
 
     ax = importances[:count].plot(kind= 'barh')
-    ax.set(title='Top 10 Strongest Predictors', xlabel='Importance',
+    ax.set(title=f'Top {count} Strongest Predictors', xlabel='Strength',
                 yticklabels=top_imp)
     
     if save_fig == True:
