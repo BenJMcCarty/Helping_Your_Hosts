@@ -24,7 +24,7 @@ With the question of how to predict high satisfaction scores in mind, I obtained
 
 # **Methods:**
 
-I started my analysis with basic statistical overviews, highlighting the large percentages of property entries that lacked 25% or more entries for each feature of the listing. Additionally, I found several features that were missing 25%+ entries as well as several columns of irrelevant data (URLs; details about how/when the data was collected; etc.) which I removed from the data. Due to the substantial amount of missing data, I chose to drop those rows and columns missing 25%+ entries as well.
+I started my analysis with basic statistical overviews, identifying several columns of irrelevant data (URLs; details about how/when the data was collected; etc.). Additionally, I found  large percentages of property listings that lacked 6 or more entries and several features that were missing 25%+ entries. Due to the substantial amount of missing data, I chose to drop those rows and columns.
 
 *Additional steps in the cleaning and preparation process included:*
 
@@ -42,7 +42,7 @@ I started my analysis with basic statistical overviews, highlighting the large p
 
 # **Results:**
 
-The Random Forest classification model showed the strongest performance in terms of properly identifying whether a property would meet the threshold of 4.8 or higher. The model is correct 67% of the time, which is better than my baseline model of 50%.
+The "Random Forest" classification model showed the strongest performance in terms of properly identifying whether a property would meet the threshold of 4.8 or higher. The model is correct 67% of the time, which is better than my baseline model of 50%.
 
 > Potential factors for the inaccuracy may include:
 >* Extreme values in the data
@@ -76,7 +76,7 @@ Superhosts must meet the [following criteria](https://www.airbnb.com/help/articl
 >* Maintain a 1% cancellation rate (1 cancellation per 100 reservations) or lower
 >* Maintain a 4.8 overall rating 
 
-These requirements are more readily achievable than having a host offer additiona listings, which would often require purchasing new properties. Furthermore, these requirements directly translate to high guest satisfaction. In my experience as a hotelier, being responsive and welcoming to guests are two of the most critical traits to ensure satisfaction. 
+These requirements are more readily achievable than having a host offer additional listings, which would often require purchasing new properties. Furthermore, these requirements directly translate to high guest satisfaction. In my experience as a hotelier, being responsive and welcoming to guests are two of the most critical traits to ensure satisfaction. 
 
 ---
 
@@ -101,5 +101,6 @@ For any additional questions, please contact:
 ├── Helping_Your_Hosts.ipynb
 ├── DS_Project_Presentation.pdf
 ├── data
+├── clf_functions
 └── img
 ```
