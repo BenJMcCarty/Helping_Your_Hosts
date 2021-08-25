@@ -114,4 +114,4 @@ dmypy.json
 .pyre/
 
 # Personal files
-Git_Ignore_Folder/
+.Git_Ignore_Folder
