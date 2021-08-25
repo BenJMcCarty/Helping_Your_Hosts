@@ -271,12 +271,25 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
             print('\tThe log loss for the testing data is moderate, indicating a weakly-performing model.')
 
     ### --- Clasification Reports --- ###
+    
+    print('\n\n|' + '----'*7 + ' Classification Report - Testing Data ' + '---'*8 + '-|\n')
+    print(metrics.classification_report(y_test, y_hat_test,
+                                    target_names=labels))
+
+    fig, ax = plt.subplots(ncols=2, figsize = figsize)
+    metrics.plot_confusion_matrix(model, X_test,y_test,cmap=cmap,
+                            normalize=normalize, display_labels=labels,
+                            ax=ax[0])
+
+    curve = metrics.plot_roc_curve(model, X_test,y_test,ax=ax[1])
+    curve.ax_.grid()
+    curve.ax_.plot([0,1],[0,1], ls=':')
+    plt.tight_layout()
+    plt.show()
 
     print('\n|' + '----'*7 + ' Classification Report - Training Data ' + '---'*8 + '|\n')
     print(metrics.classification_report(y_train, y_hat_train,
                                 target_names=labels))
-
-    # print('\n\n|' + '----'*6 + ' Classification Visualizations - Training Data ' + '---'*6 + '--|\n')
 
     fig, ax = plt.subplots(ncols=2, figsize = figsize)
     metrics.plot_confusion_matrix(model, X_train,y_train,cmap=cmap,
@@ -288,22 +301,6 @@ def evaluate_classification(model,X_train, y_train, X_test, y_test, metric,
     curve.ax_.plot([0,1],[0,1], ls=':')
     plt.tight_layout()
     plt.show()
-
-    print('\n\n|' + '----'*7 + ' Classification Report - Testing Data ' + '---'*8 + '-|\n')
-    print(metrics.classification_report(y_test, y_hat_test,
-                                    target_names=labels))
-
-    # print('\n\n|' + '----'*6 + ' Classification Visualizations - Testing Data ' + '---'*6 + '---|'+ '\n')
-
-    fig, ax = plt.subplots(ncols=2, figsize = figsize)
-    metrics.plot_confusion_matrix(model, X_test,y_test,cmap=cmap,
-                            normalize=normalize, display_labels=labels,
-                            ax=ax[0])
-
-    curve = metrics.plot_roc_curve(model, X_test,y_test,ax=ax[1])
-    curve.ax_.grid()
-    curve.ax_.plot([0,1],[0,1], ls=':')
-    plt.tight_layout()
 
     return None
 
@@ -689,6 +686,7 @@ def report_df(dataframe):
     # print(dataframe.shape)
 
     return report_df
+
 
 def eval_perf_train(model, X_train=None, y_train=None):
     """Evaluates the performance of a model on training data
