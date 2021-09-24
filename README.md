@@ -1,4 +1,4 @@
-# Supporting the Hosts of Airbnb
+# Helping Your Hosts - *Airbnb Reviews and Ratings*
 
 **Author**: Ben McCarty
 
