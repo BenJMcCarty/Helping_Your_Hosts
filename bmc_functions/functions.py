@@ -13,7 +13,7 @@ from scipy import stats
 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import seaborn as sns   
+import seaborn as sns
 
 import statsmodels.formula.api as smf
 import statsmodels.api as sms
@@ -128,28 +128,6 @@ def plot_depths(fitted_model, verbose = False):
     if verbose == True:
         return depths
 
-
-##
-def plot_depths(fitted_model, verbose = False):
-    depths = []
-
-    for i in fitted_model.estimators_:
-        depths.append(i.get_depth())
-
-    print(f'\nThe maximum depth is: {np.max(depths)}\n')
-
-    ax = sns.histplot(depths)
-
-    ax.set(title = 'Tree Depths Used in RandomForestClassifier',
-           xlabel = 'Depths', ylabel = 'Number of Trees')
-    ax.axvline(np.mean(depths), label = f'Mean: {np.mean(depths):.0f}',
-               color='k')
-
-    plt.legend(loc=0);
-    plt.show
-    
-    if verbose == True:
-        return depths
 
 ##
 def plot_importances(model, X_train_df, count = 10, return_importances = False, model_name = None, save_fig = False):
